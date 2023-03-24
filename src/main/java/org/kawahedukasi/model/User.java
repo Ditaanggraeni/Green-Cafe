@@ -4,6 +4,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.kawahedukasi.model.base.UpdatedBase;
 
 import javax.persistence.*;
+import java.util.Optional;
 
 @Entity
 @Table(name = "user")
@@ -29,13 +30,21 @@ public class User extends UpdatedBase {
     private String loginName;
 
     @Column(name = "password", nullable = false)
-    private String passeord;
+    private String password;
 
     @Column(name = "address", columnDefinition = "text")
     private String address;
 
     public User() {
         super();
+    }
+
+    public static Boolean isEmptyByLoginName(String loginName){
+        return User.find("login_name = ?1", loginName).firstResultOptional().isEmpty();
+    }
+
+    public static Optional<User> findByLoginName(String loginName){
+        return User.find("login_name = ?1", loginName).firstResultOptional();
     }
 
     public String getId() {
@@ -86,12 +95,12 @@ public class User extends UpdatedBase {
         this.loginName = loginName;
     }
 
-    public String getPasseord() {
-        return passeord;
+    public Boolean comparePassword(String password) {
+        return this.password.equals(password);
     }
 
-    public void setPasseord(String passeord) {
-        this.passeord = passeord;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getAddress() {
