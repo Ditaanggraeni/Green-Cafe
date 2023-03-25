@@ -37,6 +37,16 @@ public class UserService {
 
     }
 
+    public Response get(String loginName){
+        Optional<User> userOptional = User.findByLoginName(loginName);
+        if (userOptional.isEmpty()) {
+            throw new ValidationException("USER_NOT_FOUND");
+        }
+
+        return Response.ok(userOptional.get()).build();
+
+    }
+
     @Transactional
     @TransactionConfiguration(timeout = 30)
     public User persistUser(UserRequest request) throws NoSuchAlgorithmException {

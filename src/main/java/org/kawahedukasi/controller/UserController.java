@@ -1,5 +1,6 @@
 package org.kawahedukasi.controller;
 
+import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
@@ -8,11 +9,9 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.kawahedukasi.model.dto.UserRequest;
 import org.kawahedukasi.service.UserService;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.security.NoSuchAlgorithmException;
@@ -24,6 +23,9 @@ public class UserController {
     @Inject
     UserService userService;
 
+    @Inject
+    JsonWebToken jwt;
+
     @POST
     @RequestBody(content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = UserRequest.class)))
     @APIResponses({
@@ -33,9 +35,11 @@ public class UserController {
         return userService.post(request);
     }
 
-//    public Response get(){
-//
-//    }
+    @GET
+    @RolesAllowed("user")
+    public Response get(){
+        return userService.get(jwt.getSubject());
+    }
 //
 //    public Response put(){
 //

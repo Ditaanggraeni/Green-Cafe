@@ -13,6 +13,7 @@ public class JwtUtil {
                 .issuedAt(new Date().toInstant())
                 .expiresIn(Duration.ofHours(1))
                 .subject(user.getLoginName())
+                .groups("user")
                 .claim("email", user.getEmail())
                 .claim("phoneNumber", user.getMobilePhoneNumber())
                 .claim("fullName", user.getFullName())
