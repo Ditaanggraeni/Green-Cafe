@@ -31,7 +31,7 @@ public class UserService {
             throw new ValidationException("BAD_REQUEST");
         }
 
-        persistUser(request);
+        persistUser(request, "null");
 
         return Response.ok(new HashMap<>()).build();
 
@@ -47,10 +47,33 @@ public class UserService {
 
     }
 
+    public Response put(UserRequest request, String userId) throws NoSuchAlgorithmException {
+        if(!FormatUtil.isPassword(request.password)) {
+            throw new ValidationException("INVALID_PASSWORD");
+        }
+        if(!FormatUtil.isEmail(request.email) || !FormatUtil.isAlphabet(request.fullName)
+                || !FormatUtil.isPhoneNumber(request.mobilePhoneNumber) || !FormatUtil.isPhoneNumber(request.workPhoneNumber)) {
+            throw new ValidationException("BAD_REQUEST");
+        }
+
+        persistUser(request, userId);
+
+        return Response.ok(new HashMap<>()).build();
+
+    }
+
     @Transactional
     @TransactionConfiguration(timeout = 30)
-    public User persistUser(UserRequest request) throws NoSuchAlgorithmException {
-        Optional<User> userOptional = User.findByLoginName(request.loginName);
+    public Response delete(String userId){
+        User.deleteById(userId);
+        return Response.ok(new HashMap<>()).build();
+    }
+
+
+    @Transactional
+    @TransactionConfiguration(timeout = 30)
+    public User persistUser(UserRequest request, String userId) throws NoSuchAlgorithmException {
+        Optional<User> userOptional = User.findByIdOptional(userId);
         User user;
         if (userOptional.isEmpty()) {
             user = new User();

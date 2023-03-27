@@ -17,6 +17,7 @@ public class JwtUtil {
                 .claim("email", user.getEmail())
                 .claim("phoneNumber", user.getMobilePhoneNumber())
                 .claim("fullName", user.getFullName())
+                .claim("userId", user.getId())
                 .sign();
     }
 }
