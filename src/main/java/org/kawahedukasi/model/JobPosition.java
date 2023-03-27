@@ -19,4 +19,16 @@ public class JobPosition extends CreatedBase {
 
     @Column(name = "salary", nullable = false)
     private Double salary;
+
+    public String getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public Double getSalary() {
+        return salary;
+    }
 }
