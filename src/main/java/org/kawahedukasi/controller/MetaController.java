@@ -1,6 +1,7 @@
 package org.kawahedukasi.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
@@ -88,5 +89,14 @@ public class MetaController {
     })
     public Response detailBank(@PathParam("code") String code) throws FileNotFoundException, JsonProcessingException {
         return metaService.detailBank(code);
+    }
+
+    @GET
+    @Path("/province")
+    @APIResponses({
+            @APIResponse(responseCode = "200", content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = Map.class)))
+    })
+    public Response province() throws JsonProcessingException, UnirestException {
+        return metaService.province();
     }
 }

@@ -2,6 +2,9 @@ package org.kawahedukasi.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import org.kawahedukasi.constant.Gender;
 import org.kawahedukasi.constant.ItemCategory;
 import org.kawahedukasi.exception.ValidationException;
@@ -65,6 +68,11 @@ public class MetaService {
         }
         scanner.close();
         return om.readValue(sb.toString(), List.class);
+    }
+
+    public Response province() throws UnirestException, JsonProcessingException {
+        HttpResponse<String> httpResponse = Unirest.get("https://emsifa.github.io/api-wilayah-indonesia/api/provinces.json").asString();
+        return Response.ok(om.readValue(httpResponse.getBody(), List.class)).build();
     }
 
     public Response detailBank(String code) throws FileNotFoundException, JsonProcessingException {
