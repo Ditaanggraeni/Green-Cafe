@@ -99,4 +99,31 @@ public class MetaController {
     public Response province() throws JsonProcessingException, UnirestException {
         return metaService.province();
     }
+
+    @GET
+    @Path("/city/{provinceId}")
+    @APIResponses({
+            @APIResponse(responseCode = "200", content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = Map.class)))
+    })
+    public Response city(@PathParam("provinceId") String provinceId) throws JsonProcessingException, UnirestException {
+        return metaService.city(provinceId);
+    }
+
+    @GET
+    @Path("/district/{cityId}")
+    @APIResponses({
+            @APIResponse(responseCode = "200", content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = Map.class)))
+    })
+    public Response district(@PathParam("cityId") String cityId) throws JsonProcessingException, UnirestException {
+        return metaService.district(cityId);
+    }
+
+    @GET
+    @Path("/village/{districtId}")
+    @APIResponses({
+            @APIResponse(responseCode = "200", content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = Map.class)))
+    })
+    public Response village(@PathParam("districtId") String districtId) throws JsonProcessingException, UnirestException {
+        return metaService.village(districtId);
+    }
 }

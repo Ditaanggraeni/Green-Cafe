@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import io.vertx.core.eventbus.Message;
 import org.kawahedukasi.constant.Gender;
 import org.kawahedukasi.constant.ItemCategory;
 import org.kawahedukasi.exception.ValidationException;
@@ -16,6 +17,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -70,11 +72,6 @@ public class MetaService {
         return om.readValue(sb.toString(), List.class);
     }
 
-    public Response province() throws UnirestException, JsonProcessingException {
-        HttpResponse<String> httpResponse = Unirest.get("https://emsifa.github.io/api-wilayah-indonesia/api/provinces.json").asString();
-        return Response.ok(om.readValue(httpResponse.getBody(), List.class)).build();
-    }
-
     public Response detailBank(String code) throws FileNotFoundException, JsonProcessingException {
         List<Map<String, Object>> bankList = getBankFromResources()
                 .stream().filter(s -> s.get("bank_code").toString().equals(code))
@@ -83,5 +80,40 @@ public class MetaService {
             throw new ValidationException("INVALID_CODE");
         }
         return Response.ok(bankList.get(0)).build();
+    }
+
+    public Response province() throws UnirestException, JsonProcessingException {
+        HttpResponse<String> httpResponse = Unirest.get("https://emsifa.github.io/api-wilayah-indonesia/api/provinces.json").asString();
+        return Response.ok(om.readValue(httpResponse.getBody(), List.class)).build();
+    }
+
+    public Response city(String provinceId) throws UnirestException, JsonProcessingException {
+        HttpResponse<String> httpResponse = Unirest.get(
+                MessageFormat.format("https://emsifa.github.io/api-wilayah-indonesia/api/regencies/{0}.json", provinceId)
+        ).asString();
+        if (httpResponse.getStatus() != 200){
+            throw new ValidationException("INVALID_PROVINCE_ID");
+        }
+        return Response.ok(om.readValue(httpResponse.getBody(), List.class)).build();
+    }
+
+    public Response district(String cityId) throws UnirestException, JsonProcessingException {
+        HttpResponse<String> httpResponse = Unirest.get(
+                MessageFormat.format("https://emsifa.github.io/api-wilayah-indonesia/api/districts/{0}.json", cityId)
+        ).asString();
+        if (httpResponse.getStatus() != 200){
+            throw new ValidationException("INVALID_CITY_ID");
+        }
+        return Response.ok(om.readValue(httpResponse.getBody(), List.class)).build();
+    }
+
+    public Response village(String districtId) throws UnirestException, JsonProcessingException {
+        HttpResponse<String> httpResponse = Unirest.get(
+                MessageFormat.format("https://emsifa.github.io/api-wilayah-indonesia/api/villages/{0}.json", districtId)
+        ).asString();
+        if (httpResponse.getStatus() != 200){
+            throw new ValidationException("INVALID_DISTRICT_ID");
+        }
+        return Response.ok(om.readValue(httpResponse.getBody(), List.class)).build();
     }
 }
